@@ -1,0 +1,28 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: app-canary
+  namespace: prod
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: app
+      role: canary
+  template:
+    metadata:
+      labels:
+        app: app
+        role: canary
+    spec:
+      containers:
+      - name: app
+        image: huytm1996/app:CANARY_TAG   # sẽ thay bằng tag mới
+        ports:
+        - containerPort: 80
+        readinessProbe:
+          httpGet:
+            path: /health
+            port: 80
+          initialDelaySeconds: 2
+          periodSeconds: 5

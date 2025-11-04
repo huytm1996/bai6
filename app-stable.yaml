@@ -1,0 +1,28 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: app-stable
+  namespace: prod
+spec:
+  replicas: 9
+  selector:
+    matchLabels:
+      app: app
+      role: stable
+  template:
+    metadata:
+      labels:
+        app: app
+        role: stable
+    spec:
+      containers:
+      - name: app
+        image: huytm1996/app:stable   # image đang chạy
+        ports:
+        - containerPort: 80
+        readinessProbe:
+          httpGet:
+            path: /health
+            port: 80
+          initialDelaySeconds: 2
+          periodSeconds: 5
