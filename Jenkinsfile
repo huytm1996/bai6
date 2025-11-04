@@ -50,8 +50,8 @@ pipeline {
 
           // render canary manifest tạm (thay tag) và apply
         sh """
-        sed -i 's#CANARY_TAG#${CANARY_TAG}#g' k8s/app-canary.yaml
-        kubectl apply -f k8s/app-canary.yaml -n prod
+        sed -i 's#CANARY_TAG#${CANARY_TAG}#g' app-canary.yaml
+        kubectl apply -f app-canary.yaml -n prod
       """
 
           // chờ canary ready (timeout)
