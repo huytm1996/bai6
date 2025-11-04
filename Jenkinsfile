@@ -6,6 +6,7 @@ pipeline {
     NAMESPACE = 'prod'
     DOCKER_CRED = 'dockerhub-cred'
     SMOKE_URL = '' // nếu cần set URL trực tiếp
+    DOCKERHUB_CREDENTIALS = credentials('dockerhub-creds')
   }
 
   stages {
