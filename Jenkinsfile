@@ -19,7 +19,7 @@ pipeline {
         script {
          // tag theo build number or sha
           env.NEW_TAG = "canary-${env.BUILD_NUMBER}"
-          sh "docker build -t ${IMAGE}:${NEW_TAG} ."
+          sh "docker build -t ${IMAGE}:${env.NEW_TAG} ."
         }
       }
     }
