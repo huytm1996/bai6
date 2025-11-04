@@ -17,8 +17,8 @@ pipeline {
     stage('Build & Tag') {
       steps {
         script {
-          // tag theo build number or sha
-          NEW_TAG = "canary-${env.BUILD_NUMBER}"
+         // tag theo build number or sha
+          env.NEW_TAG = "canary-${env.BUILD_NUMBER}"
           sh "docker build -t ${IMAGE}:${NEW_TAG} ."
         }
       }
@@ -28,7 +28,7 @@ pipeline {
       steps {
                  sh '''
                    echo $DOCKERHUB_CREDENTIALS_PSW | docker login -u $DOCKERHUB_CREDENTIALS_USR --password-stdin
-                     docker push ${IMAGE}:${NEW_TAG}
+                     docker push ${IMAGE}:${env.NEW_TAG}
                     '''
        
       }
