@@ -40,6 +40,8 @@ pipeline {
     stage('Deploy Canary') {
       steps {
         script {
+
+           def CANARY_TAG = "canary-${env.BUILD_NUMBER}"
           // đảm bảo namespace tồn tại
           sh "kubectl create namespace ${NAMESPACE} --dry-run=client -o yaml | kubectl apply -f -"
 
@@ -47,10 +49,10 @@ pipeline {
           sh "kubectl apply -f app-stable.yaml -n ${NAMESPACE} || true"
 
           // render canary manifest tạm (thay tag) và apply
-          sh """
-            sed 's|CANARY_TAG|${NEW_TAG}|g' app-canary.yaml > /tmp/app-canary-${NEW_TAG}.yaml
-            kubectl apply -f /tmp/app-canary-${NEW_TAG}.yaml -n ${NAMESPACE}
-          """
+        sh """
+        sed -i 's#CANARY_TAG#${CANARY_TAG}#g' k8s/app-canary.yaml
+        kubectl apply -f k8s/app-canary.yaml -n prod
+      """
 
           // chờ canary ready (timeout)
           sh "kubectl rollout status deployment/app-canary -n ${NAMESPACE} --timeout=120s"
