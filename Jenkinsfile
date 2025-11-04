@@ -49,10 +49,11 @@ pipeline {
           sh "kubectl apply -f app-stable.yaml -n ${NAMESPACE} || true"
 
           // render canary manifest tạm (thay tag) và apply
-        sh """
-        sed -i 's#CANARY_TAG#${CANARY_TAG}#g' app-canary.yaml
-        kubectl apply -f app-canary.yaml -n prod
-      """
+      sh """
+  cat app-canary.yaml | sed 's#CANARY_TAG#${CANARY_TAG}#g' > app-canary-temp.yaml
+  kubectl apply -f app-canary-temp.yaml -n ${NAMESPACE}
+        """
+
 
           // chờ canary ready (timeout)
           sh "kubectl rollout status deployment/app-canary -n ${NAMESPACE} --timeout=120s"
