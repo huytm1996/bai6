@@ -45,15 +45,17 @@ pipeline {
           // đảm bảo namespace tồn tại
           sh "kubectl create namespace ${NAMESPACE} --dry-run=client -o yaml | kubectl apply -f -"
 
-          // apply stable (nếu chưa có) - optional
-          sh "kubectl apply -f app-stable.yaml -n ${NAMESPACE} || true"
-
+         
           // render canary manifest tạm (thay tag) và apply
-      sh """
-  cat app-canary.yaml | sed 's#CANARY_TAG#${CANARY_TAG}#g' > app-canary-temp.yaml
-  kubectl apply -f app-canary-temp.yaml -n ${NAMESPACE}
-        """
-
+   sh """
+        sed 's#CANARY_TAG#${CANARY_TAG}#g' app-canary.yaml > app-canary-deploy.yaml
+        echo '✅ Generated app-canary-deploy.yaml:'
+        cat app-canary-deploy.yaml
+      """
+ // apply stable (nếu chưa có) - optional
+          sh "kubectl apply -f app-stable.yaml -n ${NAMESPACE} || true"
+               // Deploy lên cluster
+      sh "kubectl apply -f app-canary-deploy.yaml -n ${NAMESPACE}"
 
           // chờ canary ready (timeout)
           sh "kubectl rollout status deployment/app-canary -n ${NAMESPACE} --timeout=120s"
