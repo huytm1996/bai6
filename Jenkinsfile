@@ -26,9 +26,12 @@ pipeline {
 
     stage('Push') {
       steps {
+                
                  sh '''
                    echo $DOCKERHUB_CREDENTIALS_PSW | docker login -u $DOCKERHUB_CREDENTIALS_USR --password-stdin
                     '''
+                sh 'docker build -t huytm1996/app:stable .'
+                 sh 'docker push huytm1996/app:stable'
                  sh "docker push ${IMAGE}:${env.NEW_TAG}"
        
       }
